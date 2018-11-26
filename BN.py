@@ -22,7 +22,8 @@ class Node():
     
 class BN():
     def __init__(self, gra, prob):
-        pass
+        self.graph = gra
+        self.prob = prob
 
     def computePostProb(self, evid):
         pass
@@ -31,6 +32,10 @@ class BN():
         
         
     def computeJointProb(self, evid):
-        pass
-        
-        return 0
+        joint = 1
+        for i in range(len(evid)):
+            if evid[i] == 0:
+                joint = joint * (self.prob[i].computeProb(evid)[0])
+            else:
+                joint = joint * (self.prob[i].computeProb(evid)[1])
+        return joint

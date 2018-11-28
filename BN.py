@@ -5,8 +5,6 @@ Created on Mon Oct 15 15:51:49 2018
 @author: mlopes
 """
 
-import copy
-
 
 class Node():
     def __init__(self, prob, parents = []):
@@ -27,34 +25,33 @@ class BN():
         self.prob = prob
 
     def computePostProb(self, evid):
-        if len(self.graph[evid.index(-1)]) == 1 and evid[self.graph[evid.index(-1)][0]] in (0,1):
-            return self.prob[evid.index(-1)].prob[evid[self.graph[evid.index(-1)][0]]]
+        var_pos = evid.index(-1)
+        if len(self.graph[var_pos]) == 1 and evid[self.graph[var_pos][0]] in (0,1):
+            return self.prob[var_pos].prob[evid[self.graph[var_pos][0]]]
         else:
-            var_pos = evid.index(-1)
-            var_pos_empty = []
-            var_equals_1 = 0
-            var_equals_1_and_0 = 0
-            var_pos = evid.index(-1)
+            var_unknown_pos = []
+            var_true = 0
+            var_true_and_false = 0
             
-            for k in range(len(evid)):
+            for k in range(len(self.graph)):
                 if evid[k] == []:
-                    var_pos_empty.append(k)
+                    var_unknown_pos.append(k)
                     
             ev = list(evid)
             
-            for i in range(2):
+            for i in (0,1):
                 ev[var_pos] = i
-                for j in range(2):
-                    ev[var_pos_empty[0]] = j
-                    for m in range(2):
-                        ev[var_pos_empty[1]] = m
+                for j in (0,1):
+                    ev[var_unknown_pos[0]] = j
+                    for m in (0,1):
+                        ev[var_unknown_pos[1]] = m
                         mult = 1
                         for l in range(len(evid)):
                             mult = mult * self.prob[l].computeProb(tuple(ev))[ev[l]]
                         if i == 1:
-                            var_equals_1 += mult
-                        var_equals_1_and_0 += mult
-            return var_equals_1/var_equals_1_and_0
+                            var_true += mult
+                        var_true_and_false += mult
+            return var_true/var_true_and_false
         
         
     def computeJointProb(self, evid):

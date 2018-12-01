@@ -5,6 +5,7 @@ Created on Mon Oct 15 15:51:49 2018
 @author: mlopes
 """
 
+import numpy as np
 
 class Node():
     def __init__(self, prob, parents = []):
@@ -12,12 +13,12 @@ class Node():
         self.prob = prob
     
     def computeProb(self, evid):
-        if len(self.parents) == 0:
-            return [1-self.prob[0],self.prob[0]]
-        elif len(self.parents) == 1:
-            return [1-self.prob[evid[self.parents[0]]], self.prob[evid[self.parents[0]]]]
-        elif len(self.parents) == 2:
-            return [1-self.prob[evid[self.parents[0]],evid[self.parents[1]]],self.prob[evid[self.parents[0]],evid[self.parents[1]]]]
+        parents_ev = []
+        
+        for i in self.parents:
+            parents_ev.append(evid[i])
+        
+        return [1-self.prob[tuple(parents_ev)],self.prob[tuple(parents_ev)]]
     
 class BN():
     def __init__(self, gra, prob):
@@ -26,32 +27,32 @@ class BN():
 
     def computePostProb(self, evid):
         var_pos = evid.index(-1)
-        if len(self.graph[var_pos]) == 1 and evid[self.graph[var_pos][0]] in (0,1):
-            return self.prob[var_pos].prob[evid[self.graph[var_pos][0]]]
-        else:
-            var_unknown_pos = []
-            var_true = 0
-            var_true_and_false = 0
-            
-            for k in range(len(self.graph)):
-                if evid[k] == []:
-                    var_unknown_pos.append(k)
-                    
-            ev = list(evid)
-            
-            for i in (0,1):
-                ev[var_pos] = i
-                for j in (0,1):
-                    ev[var_unknown_pos[0]] = j
-                    for m in (0,1):
-                        ev[var_unknown_pos[1]] = m
-                        mult = 1
-                        for l in range(len(evid)):
-                            mult = mult * self.prob[l].computeProb(tuple(ev))[ev[l]]
-                        if i == 1:
-                            var_true += mult
-                        var_true_and_false += mult
-            return var_true/var_true_and_false
+        var_true = 0
+        var_true_and_false = 0
+        
+        for e1 in (0,1):
+            if evid[0] in (0,1) and e1 != evid[0]:
+                continue            
+            for e2 in (0,1):
+                if evid[1] in (0,1) and e2 != evid[1]:
+                    continue                
+                for e3 in (0,1):
+                    if evid[2] in (0,1) and e3 != evid[2]:
+                        continue                    
+                    for e4 in (0,1):
+                        if evid[3] in (0,1) and e4 != evid[3]:
+                            continue
+                        for e5 in (0,1):
+                            if evid[4] in (0,1) and e5 != evid[4]:
+                                continue
+                            
+                            ev = (e1,e2,e3,e4,e5)
+                            joint = self.computeJointProb(ev)
+                            if ev[var_pos] == 1:
+                                var_true += joint
+                            var_true_and_false += joint
+                            
+        return var_true/var_true_and_false
         
         
     def computeJointProb(self, evid):

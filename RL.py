@@ -78,16 +78,16 @@ class finiteMDP:
     
     def policy(self, x, poltype = 'exploration', par = []):
         # implementar esta funcao
-        
-        if poltype == 'exploitation':
+        pass
+        """if poltype == 'exploitation':
             a = 
 
             
         elif poltype == 'exploration':
             a = np.nonzero(np.random.multinomial(1, pol[x,:]))[0][0]
 
-                
-        return a
+                """
+        return 0
     
     def Q2pol(self, Q, eta=5):
         # implementar esta funcao

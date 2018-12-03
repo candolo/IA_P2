@@ -6,6 +6,7 @@ Created on Mon Oct 15 15:51:49 2018
 """
 
 import numpy as np
+from itertools import product
 
 class Node():
     def __init__(self, prob, parents = []):
@@ -30,28 +31,20 @@ class BN():
         var_true = 0
         var_true_and_false = 0
         
-        for e1 in (0,1):
-            if evid[0] in (0,1) and e1 != evid[0]:
-                continue            
-            for e2 in (0,1):
-                if evid[1] in (0,1) and e2 != evid[1]:
-                    continue                
-                for e3 in (0,1):
-                    if evid[2] in (0,1) and e3 != evid[2]:
-                        continue                    
-                    for e4 in (0,1):
-                        if evid[3] in (0,1) and e4 != evid[3]:
-                            continue
-                        for e5 in (0,1):
-                            if evid[4] in (0,1) and e5 != evid[4]:
-                                continue
-                            
-                            ev = (e1,e2,e3,e4,e5)
-                            joint = self.computeJointProb(ev)
-                            if ev[var_pos] == 1:
-                                var_true += joint
-                            var_true_and_false += joint
-                            
+        combs = list(product([0,1], repeat=len(evid)))
+        
+        valid = True
+        for t in combs:
+            for i in range(len(t)):
+                if evid[i] in (0,1) and evid[i] != t[i]:
+                    valid = False
+            if valid:
+                joint = self.computeJointProb(t)
+                if t[var_pos] == 1:
+                    var_true += joint
+                var_true_and_false += joint
+            valid = True
+
         return var_true/var_true_and_false
         
         

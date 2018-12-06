@@ -77,10 +77,17 @@ class finiteMDP:
     def policy(self, x, poltype = 'exploration', par = []):
         # implementar esta funcao
         if poltype == 'exploitation':
-            a = np.nonzero(np.random.multinomial( 1, self.R[x,:]))[0][0]
+            possible_a = par[x,:]
+            max_index = 0
+            max_value = 0
+            for i in range(len(possible_a)):
+                if abs(possible_a[i]) > abs(max_value):
+                    max_index = i
+                    max_value = possible_a[i]
+            a = max_index
 
         if poltype == 'exploration':
-            a = random.randint(0,1)
+            a = random.randint(0,len(self.R[x,:])-1)
 
         return a
     

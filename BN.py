@@ -4,7 +4,6 @@ Created on Mon Oct 15 15:51:49 2018
 
 @author: mlopes
 """
-#test2
 
 import numpy as np
 from itertools import product
